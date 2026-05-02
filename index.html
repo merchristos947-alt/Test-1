@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#185FA5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fleet HoldCo">
+<meta name="description" content="Maritime Fleet Holding Company 20-Year Financial Model">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>Fleet HoldCo Manager</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g:#1D9E75;--b:#378ADD;--r:#E24B4A;--am:#BA7517;--pu:#533AB7;--nv:#185FA5;
+  --t:#1a1a1a;--t2:#666;--t3:#999;
+  --bg:#ffffff;--bg2:#f5f5f5;
+  --bd:#e0e0e0;--bd2:#ccc;
+  --rad:6px;--rad-lg:10px;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --t:#e8e8e8;--t2:#aaa;--t3:#666;
+    --bg:#1a1a1a;--bg2:#242424;
+    --bd:#333;--bd2:#444;
+  }
+}
+body{font-family:var(--font);font-size:13px;color:var(--t);background:var(--bg);min-height:100vh;padding-bottom:env(safe-area-inset-bottom)}
+
+/* TOP BAR */
+.topbar{background:var(--nv);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.topbar-icon{font-size:20px}
+.topbar-title{font-size:14px;font-weight:700;flex:1}
+.topbar-sub{font-size:10px;opacity:.75}
+
+/* TABS */
+.tabs{display:flex;gap:3px;flex-wrap:wrap;background:var(--bg2);border-bottom:1px solid var(--bd);padding:8px 8px 0;position:sticky;top:48px;z-index:99}
+.tab{padding:6px 11px;border:1px solid var(--bd2);border-radius:var(--rad) var(--rad) 0 0;border-bottom:none;cursor:pointer;font-size:11px;background:transparent;color:var(--t2);transition:.15s;white-space:nowrap}
+.tab.active{background:var(--bg);color:var(--nv);font-weight:700;border-color:var(--bd2);margin-bottom:-1px;border-bottom:1px solid var(--bg)}
+.panel{display:none;padding:12px}.panel.active{display:block}
+.vtabs{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:10px}
+.vtab{padding:4px 10px;border:1px solid var(--bd2);border-radius:var(--rad);cursor:pointer;font-size:11px;background:transparent;color:var(--t2)}
+.vtab.active{background:var(--b);color:#fff;border-color:var(--b);font-weight:600}
+
+/* SECTION HEADERS */
+.sec{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);margin:1rem 0 .5rem;padding-bottom:4px;border-bottom:1px solid var(--bd)}
+.div{border:none;border-top:1px solid var(--bd);margin:.75rem 0}
+
+/* INPUTS */
+.row{display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap}
+.row label{font-size:11px;color:var(--t2);min-width:175px;flex-shrink:0}
+.row input[type=range]{flex:1;min-width:80px;accent-color:var(--nv)}
+.row .val{font-size:12px;font-weight:600;min-width:65px;text-align:right;color:var(--t)}
+.row input[type=number],.row input[type=text],.row select{flex:1;min-width:80px;border:1px solid var(--bd2);border-radius:var(--rad);padding:6px 8px;font-size:12px;background:var(--bg2);color:var(--t);outline:none}
+.row input:focus,.row select:focus{border-color:var(--b)}
+
+/* CARDS */
+.eq-box{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rad-lg);padding:12px;margin-bottom:1rem}
+.eq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-top:8px}
+.eq-cell{text-align:center}.eq-val{font-size:15px;font-weight:700}.eq-lbl{font-size:10px;color:var(--t2);margin-top:2px}
+.vcard{background:var(--bg);border:1px solid var(--bd2);border-radius:var(--rad-lg);padding:12px;margin-bottom:8px}
+.vcard-title{font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.badge{font-size:9px;padding:2px 7px;border-radius:10px;background:rgba(55,138,221,.15);color:var(--nv);font-weight:600}
+.mg{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:7px;margin-bottom:1rem}
+.mc{background:var(--bg2);border-radius:var(--rad);padding:9px 11px;border:1px solid var(--bd)}
+.mc .ml{font-size:10px;color:var(--t2);margin-bottom:2px}.mc .mv{font-size:15px;font-weight:700}.mc .ms{font-size:10px;color:var(--t3);margin-top:1px}
+
+/* ALERTS */
+.warn{font-size:11px;color:var(--am);background:rgba(186,117,23,.1);border:1px solid rgba(186,117,23,.3);padding:6px 10px;border-radius:var(--rad);margin:4px 0;line-height:1.6}
+.suc{font-size:11px;color:var(--g);background:rgba(29,158,117,.08);border:1px solid rgba(29,158,117,.3);padding:6px 10px;border-radius:var(--rad);margin:4px 0;line-height:1.6}
+.err{font-size:11px;color:var(--r);background:rgba(226,75,74,.08);border:1px solid rgba(226,75,74,.3);padding:6px 10px;border-radius:var(--rad);margin:4px 0;line-height:1.6}
+.info{font-size:11px;color:var(--b);background:rgba(55,138,221,.08);border:1px solid rgba(55,138,221,.3);padding:6px 10px;border-radius:var(--rad);margin:4px 0;line-height:1.6}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--rad);font-size:11px;font-weight:700;cursor:pointer;border:1px solid;transition:.15s;touch-action:manipulation}
+.btn-p{background:var(--b);color:#fff;border-color:var(--b)}
+.btn-g{background:var(--g);color:#fff;border-color:var(--g)}
+.btn-r{background:var(--r);color:#fff;border-color:var(--r)}
+.btn-o{background:transparent;color:var(--t);border-color:var(--bd2)}
+
+/* TX BOXES */
+.tx-box{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rad-lg);padding:12px;margin-bottom:10px}
+.tx-box h4{font-size:12px;font-weight:700;margin-bottom:10px}
+.tx-item{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border:1px solid var(--bd);border-radius:var(--rad);padding:8px 10px;margin-bottom:5px;font-size:11px}
+.ti-del{cursor:pointer;color:var(--r);padding:4px 8px;border-radius:3px;font-size:14px}
+
+/* DIST TABLE */
+.dist-tbl{width:100%;border-collapse:collapse;font-size:11px}
+.dist-tbl th{font-size:10px;font-weight:700;color:var(--t2);padding:5px 6px;border-bottom:1px solid var(--bd2);text-align:left}
+.dist-tbl td{padding:4px 5px;border-bottom:1px solid var(--bd);vertical-align:middle}
+.saved{color:var(--g);font-size:10px;font-weight:700}
+
+/* SCENARIO BUTTONS */
+.vessel-section{margin-bottom:2rem}
+.vessel-header{display:flex;flex-direction:column;gap:8px;margin-bottom:10px;padding:10px 12px;background:var(--bg2);border-radius:var(--rad-lg);border:1px solid var(--bd2)}
+.vessel-header-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.vessel-title{font-size:13px;font-weight:700}
+.vtag{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700}
+.vtag-init{background:rgba(29,158,117,.12);color:var(--g)}
+.vtag-new{background:rgba(55,138,221,.12);color:var(--b)}
+.vtag-sold{background:rgba(226,75,74,.12);color:var(--r)}
+.sc-group{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.sc-btn{padding:5px 12px;border-radius:var(--rad);border:2px solid;cursor:pointer;font-size:11px;font-weight:700;background:transparent;touch-action:manipulation}
+.sc-btn.bear{border-color:var(--r);color:var(--r)}.sc-btn.bear.active{background:var(--r);color:#fff}
+.sc-btn.base{border-color:var(--b);color:var(--b)}.sc-btn.base.active{background:var(--b);color:#fff}
+.sc-btn.bull{border-color:var(--g);color:var(--g)}.sc-btn.bull.active{background:var(--g);color:#fff}
+.tog-btn{padding:4px 10px;border:2px solid var(--bd2);border-radius:var(--rad);cursor:pointer;font-size:10px;font-weight:700;background:transparent;color:var(--t2);touch-action:manipulation}
+.tog-btn.on{background:var(--am);color:#fff;border-color:var(--am)}
+.sc-info{font-size:10px;color:var(--t3);padding:4px 8px;background:var(--bg);border-radius:var(--rad);border:1px solid var(--bd)}
+
+/* TABLES */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.v-tbl{width:100%;border-collapse:collapse;font-size:11px;min-width:580px}
+.v-tbl th{font-weight:600;font-size:10px;color:var(--t2);padding:5px 7px;border-bottom:1px solid var(--bd2);text-align:right;background:var(--bg2);white-space:nowrap;position:sticky;top:0}
+.v-tbl th:first-child{text-align:left}
+.v-tbl th.grp{text-align:center;background:rgba(226,75,74,.05);border-left:2px solid rgba(226,75,74,.2)}
+.v-tbl th.gi{text-align:right;background:rgba(226,75,74,.03);font-size:9px}
+.v-tbl th.gi:first-of-type{border-left:2px solid rgba(226,75,74,.2)}
+.v-tbl td{padding:5px 7px;border-bottom:1px solid var(--bd);text-align:right;white-space:nowrap}
+.v-tbl td:first-child{text-align:left;font-weight:600}
+.v-tbl .boom{background:rgba(29,158,117,.06)}.v-tbl .trough{background:rgba(226,75,74,.05)}
+.v-tbl .survey{background:rgba(186,117,23,.07)}
+.v-tbl .sold-yr td{color:var(--t3)!important}
+.v-tbl .loan-free{background:rgba(29,158,117,.07);border-left:3px solid var(--g)}
+.v-tbl .exit-prime td:first-child::after{content:' ★★';color:var(--am)}
+.v-tbl .exit-good td:first-child::after{content:' ⭐';color:var(--am)}
+.v-tbl td.neg{color:var(--r);font-weight:600}.v-tbl td.pos{color:var(--g);font-weight:600}.v-tbl td.am{color:var(--am)}
+
+/* FUND TABLE */
+.fund-section{margin-top:2rem}
+.fund-title{font-size:14px;font-weight:700;margin-bottom:6px;padding-bottom:6px;border-bottom:2px solid var(--b)}
+.f-tbl{width:100%;border-collapse:collapse;font-size:11px;min-width:700px}
+.f-tbl th{font-weight:600;font-size:10px;color:var(--t2);padding:5px 7px;border-bottom:1px solid var(--bd2);text-align:right;background:var(--bg2);white-space:nowrap}
+.f-tbl th:first-child{text-align:left}
+.f-tbl th.vg{background:rgba(55,138,221,.07);border-bottom:1px solid var(--b)}
+.f-tbl th.dg{background:rgba(186,117,23,.07);border-bottom:1px solid var(--am)}
+.f-tbl th.fg{background:rgba(83,58,183,.07);border-bottom:1px solid var(--pu)}
+.f-tbl td{padding:5px 7px;border-bottom:1px solid var(--bd);text-align:right;white-space:nowrap}
+.f-tbl td:first-child{text-align:left;font-weight:600}
+.f-tbl .boom{background:rgba(29,158,117,.04)}.f-tbl .trough{background:rgba(226,75,74,.04)}
+.f-tbl .res-draw{border-left:3px solid var(--r)}
+.f-tbl .loan-free-yr{background:rgba(29,158,117,.06)}
+.debt-bar-wrap{display:inline-flex;align-items:center;gap:4px;width:100%}
+.debt-bar-outer{flex:1;background:rgba(226,75,74,.15);border-radius:3px;height:7px;min-width:30px}
+.debt-bar-inner{height:100%;border-radius:3px}
+
+/* SHAREHOLDERS */
+.sh-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:1.5rem}
+.sh-card{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--rad-lg);padding:10px 12px}
+.sh-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;display:inline-block}
+.sh-tbl-section{margin-bottom:2rem}
+.sh-tbl-header{font-size:12px;font-weight:700;margin-bottom:8px;padding:8px 12px;border-radius:var(--rad-lg);display:flex;align-items:center;gap:8px}
+.sh-tbl{width:100%;border-collapse:collapse;font-size:11px;min-width:380px}
+.sh-tbl th{font-weight:600;font-size:10px;color:var(--t2);padding:5px 7px;border-bottom:1px solid var(--bd2);text-align:right;background:var(--bg2);white-space:nowrap}
+.sh-tbl th:first-child{text-align:left}
+.sh-tbl td{padding:5px 7px;border-bottom:1px solid var(--bd);text-align:right;white-space:nowrap}
+.sh-tbl td:first-child{text-align:left;font-weight:500}
+.sh-tbl .total-row{font-weight:700;border-top:2px solid var(--bd2);background:var(--bg2)}
+
+/* INSTALL BANNER */
+.install-banner{background:var(--nv);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px}
+.install-banner button{background:#fff;color:var(--nv);border:none;border-radius:var(--rad);padding:6px 12px;font-weight:700;font-size:11px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<!-- Install banner (shown before install) -->
+<div class="install-banner" id="install-banner" style="display:none">
+  <span>📲 Add Fleet HoldCo to your home screen for the best experience</span>
+  <button onclick="installApp()">Install</button>
+  <button onclick="document.getElementById('install-banner').style.display='none'" style="background:transparent;color:#fff;font-size:16px;padding:0 4px">✕</button>
+</div>
+
+<div class="topbar">
+  <span class="topbar-icon">🚢</span>
+  <div>
+    <div class="topbar-title" id="topbar-title">Fleet HoldCo Manager</div>
+    <div class="topbar-sub">20-Year Maritime Financial Model</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="go('setup')">⚙ Setup</button>
+  <button class="tab" onclick="go('renew')">🔄 Renewal</button>
+  <button class="tab" onclick="go('dist')">💸 Distribution</button>
+  <button class="tab" onclick="go('cycle')">📊 Cycle</button>
+  <button class="tab" onclick="go('tbl')">📋 Tables</button>
+  <button class="tab" onclick="go('shareholders')">👥 Shareholders</button>
+</div>
+
+<!-- SETUP -->
+<div class="panel active" id="panel-setup">
+  <div class="sec">Holding company</div>
+  <div class="row"><label>Holding Co. name</label><input type="text" id="hco-name" value="My Maritime HoldCo" oninput="renderAll()"></div>
+  <div class="row"><label>NEPA oversight cost (€k/yr)</label><input type="range" id="ovhd" min="0" max="1000" step="25" value="300" oninput="sv('ovhd','€','k');renderAll()"><span class="val" id="d-ovhd">€300k</span></div>
+  <div class="row"><label>Your total equity (€M)</label><input type="range" id="total-eq" min="1" max="50" step="0.5" value="8" oninput="sv('total-eq','€','M');updateEqBar();renderAll()"><span class="val" id="d-total-eq">€8M</span></div>
+  <div class="div"></div>
+  <div class="sec">Shareholders</div>
+  <div class="row"><label>Number of shareholders</label><input type="range" id="nsh" min="1" max="5" step="1" value="1" oninput="onNShChange()"><span class="val" id="d-nsh">1</span></div>
+  <div id="sh-inputs"></div>
+  <div id="sh-pct-warn"></div>
+  <div class="div"></div>
+  <div class="sec">Initial fleet size</div>
+  <div class="row"><label>Number of initial vessels</label><input type="range" id="nships" min="1" max="5" step="1" value="2" oninput="onNChange()"><span class="val" id="d-nships">2 vessels</span></div>
+  <div class="eq-box"><div style="font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--t2)">TOTAL INITIAL EQUITY REQUIREMENT</div><div class="eq-grid" id="eq-grid"></div></div>
+  <div class="vtabs" id="vtabs"></div>
+  <div id="vpanel"></div>
+</div>
+
+<!-- RENEWAL -->
+<div class="panel" id="panel-renew">
+  <div class="sec">Sell a vessel</div>
+  <div class="tx-box">
+    <h4>🔴 Record vessel sale</h4>
+    <div class="row"><label>Vessel</label><select id="sell-v"></select></div>
+    <div class="row"><label>Year of sale</label><input type="number" id="sell-yr" min="1" max="20" value="8"></div>
+    <div class="row"><label>Sale price ($M)</label><input type="number" id="sell-px" step="0.1" value="12"></div>
+    <div style="margin-top:8px;display:flex;gap:8px">
+      <button class="btn btn-r" onclick="confirmSell()">✓ Confirm Sale</button>
+      <button class="btn btn-o" onclick="clearSell()">✕ Clear</button>
+    </div>
+    <div id="sold-list" style="margin-top:8px"></div>
+  </div>
+  <div class="sec">Buy a new vessel</div>
+  <div class="tx-box">
+    <h4>🟢 Record vessel purchase</h4>
+    <div class="row"><label>Vessel name</label><input type="text" id="buy-name" placeholder="e.g. MV Poseidon III" oninput="chkBuyName()"></div>
+    <div id="buy-name-err"></div>
+    <div class="row"><label>Year of purchase</label><input type="number" id="buy-yr" min="1" max="20" value="6"></div>
+    <div id="buy-inputs"></div>
+    <div style="margin-top:8px;display:flex;gap:8px">
+      <button class="btn btn-g" onclick="confirmBuy()">✓ Confirm Purchase</button>
+      <button class="btn btn-o" onclick="clearBuy()">✕ Clear</button>
+    </div>
+    <div id="bought-list" style="margin-top:8px"></div>
+  </div>
+</div>
+
+<!-- DISTRIBUTION -->
+<div class="panel" id="panel-dist">
+  <div class="sec">Per-year distribution schedule</div>
+  <div class="row" style="margin-bottom:10px">
+    <label>Default reserve (%)</label><input type="number" id="def-res" value="25" style="width:50px;flex:none">
+    <label style="min-width:auto;margin-left:6px">Expansion (%)</label><input type="number" id="def-exp" value="35" style="width:50px;flex:none">
+    <label style="min-width:auto;margin-left:6px">Profit share (%)</label><input type="number" id="def-shr" value="40" style="width:50px;flex:none">
+    <button class="btn btn-p" style="margin-left:6px;padding:5px 10px" onclick="applyAll()">Apply all</button>
+  </div>
+  <div id="dist-warn"></div>
+  <div style="overflow-x:auto"><table class="dist-tbl">
+    <thead><tr><th>Yr</th><th>Res %</th><th>Exp %</th><th>Shr %</th><th>Tot</th><th></th><th></th></tr></thead>
+    <tbody id="dist-body"></tbody>
+  </table></div>
+</div>
+
+<!-- CYCLE -->
+<div class="panel" id="panel-cycle">
+  <div class="sec">Cycle parameters</div>
+  <div class="row"><label>Cycle length (years)</label><input type="range" id="cyclen" min="5" max="10" step="1" value="7" oninput="sv('cyclen','','yr');renderAll()"><span class="val" id="d-cyclen">7yr</span></div>
+  <div class="row"><label>Cycle phase offset</label><input type="range" id="cycoff" min="0" max="6" step="1" value="3" oninput="svOff();renderAll()"><span class="val" id="d-cycoff">3 (mid)</span></div>
+  <div class="sec">Bear</div>
+  <div class="row"><label>Trough ×</label><input type="range" id="blo" min="0.20" max="0.70" step="0.05" value="0.40" oninput="sv('blo','','×');renderAll()"><span class="val" id="d-blo">0.40×</span></div>
+  <div class="row"><label>Peak ×</label><input type="range" id="bhi" min="0.80" max="1.50" step="0.05" value="1.05" oninput="sv('bhi','','×');renderAll()"><span class="val" id="d-bhi">1.05×</span></div>
+  <div class="sec">Base</div>
+  <div class="row"><label>Trough ×</label><input type="range" id="mlo" min="0.40" max="0.85" step="0.05" value="0.60" oninput="sv('mlo','','×');renderAll()"><span class="val" id="d-mlo">0.60×</span></div>
+  <div class="row"><label>Peak ×</label><input type="range" id="mhi" min="1.10" max="2.20" step="0.05" value="1.65" oninput="sv('mhi','','×');renderAll()"><span class="val" id="d-mhi">1.65×</span></div>
+  <div class="sec">Bull</div>
+  <div class="row"><label>Trough ×</label><input type="range" id="llo" min="0.55" max="1.00" step="0.05" value="0.80" oninput="sv('llo','','×');renderAll()"><span class="val" id="d-llo">0.80×</span></div>
+  <div class="row"><label>Peak ×</label><input type="range" id="lhi" min="1.50" max="2.80" step="0.05" value="2.20" oninput="sv('lhi','','×');renderAll()"><span class="val" id="d-lhi">2.20×</span></div>
+</div>
+
+<!-- TABLES -->
+<div class="panel" id="panel-tbl">
+  <div id="hco-title" style="font-size:14px;font-weight:700;margin-bottom:4px"></div>
+  <div style="font-size:11px;color:var(--t2);margin-bottom:1rem">Liberian flag · Greek NEPA L.4926/2022 · 5% GR tax on profit share</div>
+  <div id="vessel-tables"></div>
+  <div class="fund-section">
+    <div class="fund-title" id="fund-title">Fleet Fund & Distribution</div>
+    <div class="tbl-wrap"><table class="f-tbl"><thead id="fund-head"></thead><tbody id="fund-body"></tbody></table></div>
+    <div id="fund-alerts" style="margin-top:8px"></div>
+  </div>
+</div>
+
+<!-- SHAREHOLDERS -->
+<div class="panel" id="panel-shareholders">
+  <div id="sh-section-title" style="font-size:14px;font-weight:700;margin-bottom:4px"></div>
+  <div style="font-size:11px;color:var(--t2);margin-bottom:1rem">Profit share, reserve and expansion fund access by ownership %</div>
+  <div class="sh-grid" id="sh-summary-cards"></div>
+  <div id="sh-tables"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ============ ALL APP LOGIC ============
+const EUR_USD=1.08,YRS=20,DIVTAX=0.05;
+let vessels=[],sales=[],purchases=[],distSchedule={},activeVTab=0;
+let vesselScenarios={};
+let shareholders=[{name:'Shareholder 1',pct:100}];
+const SH_COLORS=['#378ADD','#1D9E75','#BA7517','#533AB7','#E24B4A'];
+let deferInstall=null;
+
+// PWA install prompt
+window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferInstall=e;document.getElementById('install-banner').style.display='flex';});
+function installApp(){if(deferInstall){deferInstall.prompt();deferInstall.userChoice.then(()=>{document.getElementById('install-banner').style.display='none';});}}
+window.addEventListener('appinstalled',()=>{document.getElementById('install-banner').style.display='none';});
+
+function defV(i){return{name:`MV Vessel ${String.fromCharCode(65+i)}`,price:17,age:10,ltv:75,tenor:12,rate:7,tc:18000,opex:6500,ageprem:4,opinfl:2.5,mgmt:800,lastdd:0,ddoff:25,maint:130,ddis:225,ddss:900,spvSetup:500,spvAnnual:500,flagFee:5,flagAnnual:2,grt:30000,idle:20};}
+function getVSc(id){return vesselScenarios[id]||{scenario:'base',cycleOn:true};}
+function setVSc(id,sc){vesselScenarios[id]={...getVSc(id),...sc};}
+function gv(id){const e=document.getElementById(id);return e?parseFloat(e.value)||0:0;}
+function gs(id){const e=document.getElementById(id);return e?e.value:'';}
+function sv(id,pre,suf){
+  const v=gv(id),d=document.getElementById('d-'+id);if(!d)return;
+  if(pre==='€'&&suf==='M')d.textContent='€'+v.toFixed(1)+'M';
+  else if(pre==='€'&&suf==='k')d.textContent='€'+Math.round(v)+'k';
+  else if(suf==='%')d.textContent=v.toFixed(1)+'%';
+  else if(suf==='×')d.textContent=v.toFixed(2)+'×';
+  else if(suf==='yr')d.textContent=Math.round(v)+'yr';
+  else if(suf==='d')d.textContent=Math.round(v)+'d';
+  else if(suf==='k')d.textContent=pre+Math.round(v)+'k';
+  else if(pre==='$'&&suf==='M')d.textContent='$'+v.toFixed(1)+'M';
+  else if(pre==='$')d.textContent='$'+Math.round(v).toLocaleString();
+  else d.textContent=v;
+}
+function svOff(){const o=['0 (trough)','1','2','3 (mid)','4','5','6 (peak)'];const d=document.getElementById('d-cycoff');if(d)d.textContent=o[Math.round(gv('cycoff'))];}
+
+// SHAREHOLDERS
+function onNShChange(){
+  const n=Math.round(gv('nsh'));
+  document.getElementById('d-nsh').textContent=n;
+  while(shareholders.length<n)shareholders.push({name:`Shareholder ${shareholders.length+1}`,pct:0});
+  while(shareholders.length>n)shareholders.pop();
+  const even=Math.floor(100/n);
+  shareholders.forEach((s,i)=>s.pct=i===n-1?100-even*(n-1):even);
+  renderShInputs();validateShPct();renderAll();
+}
+function renderShInputs(){
+  document.getElementById('sh-inputs').innerHTML=shareholders.map((s,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;padding:8px 10px;background:var(--bg2);border-radius:var(--rad);border:1px solid var(--bd)">
+      <div style="width:10px;height:10px;border-radius:50%;background:${SH_COLORS[i]};flex-shrink:0"></div>
+      <input type="text" id="sh-name-${i}" value="${s.name}" style="flex:2;border:1px solid var(--bd2);border-radius:var(--rad);padding:5px 8px;font-size:12px;background:var(--bg);color:var(--t);outline:none" oninput="shareholders[${i}].name=this.value;renderAll()">
+      <input type="number" id="sh-pct-${i}" value="${s.pct}" min="0" max="100" step="1" style="width:60px;flex:none;border:1px solid var(--bd2);border-radius:var(--rad);padding:5px 7px;font-size:12px;background:var(--bg);color:var(--t);outline:none;text-align:right" oninput="shareholders[${i}].pct=parseFloat(this.value)||0;validateShPct();renderAll()">
+      <span style="font-size:11px;color:var(--t2)">%</span>
+    </div>`).join('');
+}
+function validateShPct(){
+  const tot=shareholders.reduce((s,sh)=>s+sh.pct,0);
+  const w=document.getElementById('sh-pct-warn');if(!w)return;
+  w.innerHTML=Math.abs(tot-100)>0.01?`<div class="warn">⚠ Shares sum to ${tot.toFixed(1)}% — must be 100%</div>`:`<div class="suc">✓ Ownership = 100%</div>`;
+}
+
+// VESSEL SETUP
+function onNChange(){
+  const n=Math.round(gv('nships'));
+  document.getElementById('d-nships').textContent=n+' vessel'+(n!==1?'s':'');
+  while(vessels.length<n)vessels.push(defV(vessels.length));
+  while(vessels.length>n)vessels.pop();
+  if(activeVTab>=vessels.length)activeVTab=0;
+  renderVTabs();renderVPanel(activeVTab);updateEqBar();updateSellDrop();renderAll();
+}
+function renderVTabs(){document.getElementById('vtabs').innerHTML=vessels.map((v,i)=>`<button class="vtab${i===activeVTab?' active':''}" onclick="switchV(${i})">${v.name||'V'+(i+1)}</button>`).join('');}
+function switchV(i){saveVP();activeVTab=i;renderVTabs();renderVPanel(i);}
+function saveVP(){
+  const v=vessels[activeVTab];if(!v)return;const p=`v${activeVTab}_`;
+  ['name','price','age','ltv','tenor','rate','tc','opex','ageprem','opinfl','mgmt','lastdd','ddoff','maint','ddis','ddss','spvSetup','spvAnnual','flagFee','flagAnnual','grt','idle'].forEach(f=>{
+    const el=document.getElementById(p+f);if(!el)return;v[f]=el.type==='text'?el.value:parseFloat(el.value)||0;
+  });
+}
+function renderVPanel(idx){
+  const v=vessels[idx];if(!v)return;const p=`v${idx}_`;
+  document.getElementById('vpanel').innerHTML=`
+  <div class="vcard">
+    <div class="vcard-title">Vessel ${idx+1} <span class="badge">🇱🇷 Liberian flag</span></div>
+    <div class="sec" style="margin-top:0">Identity & Financing</div>
+    <div class="row"><label>Vessel name</label><input type="text" id="${p}name" value="${v.name}" oninput="onVN(${idx})"></div>
+    <div class="row"><label>Purchase price ($M)</label><input type="range" id="${p}price" min="1" max="100" step="0.5" value="${v.price}" oninput="sv('${p}price','$','M');updateEqBar();renderAll()"><span class="val" id="d-${p}price">$${v.price}M</span></div>
+    <div class="row"><label>Vessel age (0=new)</label><input type="range" id="${p}age" min="0" max="25" step="1" value="${v.age}" oninput="sv('${p}age','','yr');ddS(${idx});renderAll()"><span class="val" id="d-${p}age">${v.age}yr</span></div>
+    <div class="row"><label>Bank LTV (%)</label><input type="range" id="${p}ltv" min="50" max="80" step="5" value="${v.ltv}" oninput="sv('${p}ltv','','%');updateEqBar();renderAll()"><span class="val" id="d-${p}ltv">${v.ltv}%</span></div>
+    <div class="row"><label>Loan tenor (yrs)</label><input type="range" id="${p}tenor" min="5" max="20" step="1" value="${v.tenor}" oninput="sv('${p}tenor','','yr');renderAll()"><span class="val" id="d-${p}tenor">${v.tenor}yr</span></div>
+    <div class="row"><label>Interest rate (%)</label><input type="range" id="${p}rate" min="3" max="12" step="0.25" value="${v.rate}" oninput="sv('${p}rate','','%');renderAll()"><span class="val" id="d-${p}rate">${v.rate}%</span></div>
+    <div class="sec">SPV & Flag</div>
+    <div class="row"><label>SPV setup cost ($)</label><input type="range" id="${p}spvSetup" min="0" max="5000" step="100" value="${v.spvSetup}" oninput="sv('${p}spvSetup','$','');renderAll()"><span class="val" id="d-${p}spvSetup">$${v.spvSetup}</span></div>
+    <div class="row"><label>SPV annual fee ($)</label><input type="range" id="${p}spvAnnual" min="0" max="5000" step="100" value="${v.spvAnnual}" oninput="sv('${p}spvAnnual','$','');renderAll()"><span class="val" id="d-${p}spvAnnual">$${v.spvAnnual}</span></div>
+    <div class="row"><label>Flag registration ($k)</label><input type="range" id="${p}flagFee" min="0" max="50" step="0.5" value="${v.flagFee}" oninput="sv('${p}flagFee','$','k');renderAll()"><span class="val" id="d-${p}flagFee">$${v.flagFee}k</span></div>
+    <div class="row"><label>Flag annual fee ($k)</label><input type="range" id="${p}flagAnnual" min="0" max="20" step="0.5" value="${v.flagAnnual}" oninput="sv('${p}flagAnnual','$','k');renderAll()"><span class="val" id="d-${p}flagAnnual">$${v.flagAnnual}k</span></div>
+    <div class="sec">Operating Parameters</div>
+    <div class="row"><label>TC rate ($/day)</label><input type="range" id="${p}tc" min="0" max="100000" step="500" value="${v.tc}" oninput="sv('${p}tc','$','');renderAll()"><span class="val" id="d-${p}tc">$${v.tc.toLocaleString()}</span></div>
+    <div class="row"><label>OPEX ($/day)</label><input type="range" id="${p}opex" min="0" max="15000" step="100" value="${v.opex}" oninput="sv('${p}opex','$','');renderAll()"><span class="val" id="d-${p}opex">$${v.opex.toLocaleString()}</span></div>
+    <div class="row"><label>Age OPEX premium (%/yr >12yr)</label><input type="range" id="${p}ageprem" min="0" max="15" step="0.5" value="${v.ageprem}" oninput="sv('${p}ageprem','','%');renderAll()"><span class="val" id="d-${p}ageprem">${v.ageprem}%</span></div>
+    <div class="row"><label>OPEX inflation (%/yr)</label><input type="range" id="${p}opinfl" min="0" max="8" step="0.25" value="${v.opinfl}" oninput="sv('${p}opinfl','','%');renderAll()"><span class="val" id="d-${p}opinfl">${v.opinfl}%</span></div>
+    <div class="row"><label>Mgmt fee ($/day)</label><input type="range" id="${p}mgmt" min="0" max="3000" step="50" value="${v.mgmt}" oninput="sv('${p}mgmt','$','');renderAll()"><span class="val" id="d-${p}mgmt">$${v.mgmt}</span></div>
+    <div class="row"><label>Idle days/year</label><input type="range" id="${p}idle" min="0" max="60" step="1" value="${v.idle}" oninput="sv('${p}idle','','d');renderAll()"><span class="val" id="d-${p}idle">${v.idle}d</span></div>
+    <div class="row"><label>Vessel GRT</label><input type="range" id="${p}grt" min="5000" max="100000" step="500" value="${v.grt}" oninput="sv('${p}grt','','');renderAll()"><span class="val" id="d-${p}grt">${v.grt.toLocaleString()}</span></div>
+    <div class="sec">CAPEX & Drydock</div>
+    <div class="row"><label>Last drydock (yrs before purchase)</label><input type="range" id="${p}lastdd" min="0" max="5" step="0.5" value="${v.lastdd}" oninput="sv('${p}lastdd','','yr ago');ddS(${idx});renderAll()"><span class="val" id="d-${p}lastdd">${v.lastdd}yr ago</span></div>
+    <div id="dds-${idx}" style="font-size:11px;color:var(--t2);background:var(--bg2);border-radius:var(--rad);padding:7px 10px;margin-bottom:7px;border:1px solid var(--bd);line-height:2"></div>
+    <div class="row"><label>Drydock off-hire (days)</label><input type="range" id="${p}ddoff" min="0" max="60" step="1" value="${v.ddoff}" oninput="sv('${p}ddoff','','d');renderAll()"><span class="val" id="d-${p}ddoff">${v.ddoff}d</span></div>
+    <div class="row"><label>Intermediate survey ($k)</label><input type="range" id="${p}ddis" min="0" max="1500" step="25" value="${v.ddis}" oninput="sv('${p}ddis','$','k');renderAll()"><span class="val" id="d-${p}ddis">$${v.ddis}k</span></div>
+    <div class="row"><label>Special survey + DD ($k)</label><input type="range" id="${p}ddss" min="0" max="3000" step="50" value="${v.ddss}" oninput="sv('${p}ddss','$','k');renderAll()"><span class="val" id="d-${p}ddss">$${v.ddss}k</span></div>
+    <div class="row"><label>Annual maintenance CAPEX ($k)</label><input type="range" id="${p}maint" min="0" max="500" step="10" value="${v.maint}" oninput="sv('${p}maint','$','k');renderAll()"><span class="val" id="d-${p}maint">$${v.maint}k</span></div>
+  </div>`;
+  ddS(idx);
+}
+function ddS(idx){
+  const el=document.getElementById(`dds-${idx}`);if(!el)return;
+  const v=vessels[idx];if(!v)return;
+  const ld=parseFloat(document.getElementById(`v${idx}_lastdd`)?.value??v.lastdd);
+  const lines=[];
+  for(let y=1;y<=20;y++){const t=ld+y;const ss=Math.round(t*10)%50===0&&t>0;const is=!ss&&Math.round(t*10)%25===0&&t>0;if(ss)lines.push(`🔧 <b>Special survey</b> → Yr ${y}`);else if(is)lines.push(`🔍 <b>Intermediate survey</b> → Yr ${y}`);}
+  el.innerHTML=lines.slice(0,6).join('<br>')||'No surveys in first 20 years';
+}
+function onVN(idx){const el=document.getElementById(`v${idx}_name`);if(!el)return;const n=el.value.trim();const dup=vessels.some((v,i)=>i!==idx&&v.name===n)||purchases.some(p=>p.name===n);el.style.borderColor=dup?'var(--r)':'';if(!dup){vessels[idx].name=n;renderVTabs();updateSellDrop();}}
+function updateEqBar(){
+  saveVP();let cost=0,loan=0,eq=0;
+  vessels.forEach((v,i)=>{const pr=(parseFloat(document.getElementById(`v${i}_price`)?.value)||v.price)*1e6;const lv=(parseFloat(document.getElementById(`v${i}_ltv`)?.value)||v.ltv)/100;const spv=parseFloat(document.getElementById(`v${i}_spvSetup`)?.value)||v.spvSetup;const fl=(parseFloat(document.getElementById(`v${i}_flagFee`)?.value)||v.flagFee)*1e3;cost+=pr+spv+fl;loan+=pr*lv;eq+=pr*(1-lv)+spv+fl;});
+  const totalEUR=gv('total-eq')*1e6,eqEUR=eq/EUR_USD,surplus=totalEUR-eqEUR;
+  document.getElementById('eq-grid').innerHTML=`
+    <div class="eq-cell"><div class="eq-val">$${(cost/1e6).toFixed(2)}M</div><div class="eq-lbl">Acquisition cost</div></div>
+    <div class="eq-cell"><div class="eq-val" style="color:var(--r)">$${(loan/1e6).toFixed(2)}M</div><div class="eq-lbl">Bank debt</div></div>
+    <div class="eq-cell"><div class="eq-val" style="color:var(--b)">€${(eqEUR/1e6).toFixed(2)}M</div><div class="eq-lbl">Equity needed</div></div>
+    <div class="eq-cell"><div class="eq-val" style="color:var(--pu)">€${(totalEUR/1e6).toFixed(1)}M</div><div class="eq-lbl">Your equity</div></div>
+    <div class="eq-cell"><div class="eq-val" style="color:${surplus>=0?'var(--g)':'var(--r)'}">€${(Math.abs(surplus)/1e6).toFixed(2)}M</div><div class="eq-lbl">${surplus>=0?'Surplus':'⚠ Shortfall'}</div></div>`;
+}
+function updateSellDrop(){const sel=document.getElementById('sell-v');if(!sel)return;const sold=sales.map(s=>s.vesselName);const all=[...vessels.map(v=>v.name),...purchases.map(p=>p.name)].filter(n=>!sold.includes(n));sel.innerHTML=all.map(n=>`<option value="${n}">${n}</option>`).join('');}
+function confirmSell(){const vn=gs('sell-v'),yr=parseInt(document.getElementById('sell-yr').value),px=parseFloat(document.getElementById('sell-px').value);if(!vn||!yr||yr<1||yr>20||!px||px<=0){alert('Check all fields');return;}if(sales.find(s=>s.vesselName===vn)){alert(`${vn} already sold`);return;}sales.push({vesselName:vn,year:yr,price:px});renderSoldList();updateSellDrop();renderAll();}
+function clearSell(){document.getElementById('sell-yr').value=8;document.getElementById('sell-px').value=12;}
+function removeSale(i){sales.splice(i,1);renderSoldList();updateSellDrop();renderAll();}
+function renderSoldList(){const el=document.getElementById('sold-list');if(!el)return;el.innerHTML=sales.length?'<div style="font-size:10px;font-weight:700;color:var(--t2);margin:8px 0 4px">CONFIRMED SALES</div>'+sales.map((s,i)=>`<div class="tx-item"><div><b>${s.vesselName}</b> — Yr ${s.year}, $${s.price}M</div><span class="ti-del" onclick="removeSale(${i})">✕</span></div>`).join(''):'';}
+function chkBuyName(){const n=gs('buy-name').trim(),e=document.getElementById('buy-name-err');if(!e)return;const all=[...vessels.map(v=>v.name),...purchases.map(p=>p.name)];e.innerHTML=all.includes(n)?`<div class="err">⚠ "${n}" already exists</div>`:'';}
+function renderBuyInputs(){
+  document.getElementById('buy-inputs').innerHTML=`
+    <div class="row"><label>Price ($M)</label><input type="range" id="b_price" min="1" max="100" step="0.5" value="18" oninput="sv('b_price','$','M')"><span class="val" id="d-b_price">$18M</span></div>
+    <div class="row"><label>Age (0=new)</label><input type="range" id="b_age" min="0" max="25" step="1" value="8" oninput="sv('b_age','','yr')"><span class="val" id="d-b_age">8yr</span></div>
+    <div class="row"><label>LTV (%)</label><input type="range" id="b_ltv" min="50" max="80" step="5" value="80" oninput="sv('b_ltv','','%')"><span class="val" id="d-b_ltv">80%</span></div>
+    <div class="row"><label>Tenor (yrs)</label><input type="range" id="b_tenor" min="5" max="20" step="1" value="12" oninput="sv('b_tenor','','yr')"><span class="val" id="d-b_tenor">12yr</span></div>
+    <div class="row"><label>Rate (%)</label><input type="range" id="b_rate" min="3" max="12" step="0.25" value="7" oninput="sv('b_rate','','%')"><span class="val" id="d-b_rate">7.0%</span></div>
+    <div class="row"><label>SPV setup ($)</label><input type="range" id="b_spvSetup" min="0" max="5000" step="100" value="500" oninput="sv('b_spvSetup','$','')"><span class="val" id="d-b_spvSetup">$500</span></div>
+    <div class="row"><label>SPV annual ($)</label><input type="range" id="b_spvAnnual" min="0" max="5000" step="100" value="500" oninput="sv('b_spvAnnual','$','')"><span class="val" id="d-b_spvAnnual">$500</span></div>
+    <div class="row"><label>Flag reg ($k)</label><input type="range" id="b_flagFee" min="0" max="50" step="0.5" value="5" oninput="sv('b_flagFee','$','k')"><span class="val" id="d-b_flagFee">$5k</span></div>
+    <div class="row"><label>Flag annual ($k)</label><input type="range" id="b_flagAnnual" min="0" max="20" step="0.5" value="2" oninput="sv('b_flagAnnual','$','k')"><span class="val" id="d-b_flagAnnual">$2k</span></div>
+    <div class="row"><label>TC rate ($/day)</label><input type="range" id="b_tc" min="0" max="100000" step="500" value="18000" oninput="sv('b_tc','$','')"><span class="val" id="d-b_tc">$18,000</span></div>
+    <div class="row"><label>OPEX ($/day)</label><input type="range" id="b_opex" min="0" max="15000" step="100" value="6500" oninput="sv('b_opex','$','')"><span class="val" id="d-b_opex">$6,500</span></div>
+    <div class="row"><label>Age OPEX prem (%)</label><input type="range" id="b_ageprem" min="0" max="15" step="0.5" value="4" oninput="sv('b_ageprem','','%')"><span class="val" id="d-b_ageprem">4%</span></div>
+    <div class="row"><label>OPEX infl (%)</label><input type="range" id="b_opinfl" min="0" max="8" step="0.25" value="2.5" oninput="sv('b_opinfl','','%')"><span class="val" id="d-b_opinfl">2.5%</span></div>
+    <div class="row"><label>Mgmt fee ($/day)</label><input type="range" id="b_mgmt" min="0" max="3000" step="50" value="800" oninput="sv('b_mgmt','$','')"><span class="val" id="d-b_mgmt">$800</span></div>
+    <div class="row"><label>Idle days/yr</label><input type="range" id="b_idle" min="0" max="60" step="1" value="20" oninput="sv('b_idle','','d')"><span class="val" id="d-b_idle">20d</span></div>
+    <div class="row"><label>GRT</label><input type="range" id="b_grt" min="5000" max="100000" step="500" value="30000" oninput="sv('b_grt','','')"><span class="val" id="d-b_grt">30,000</span></div>
+    <div class="row"><label>Last drydock (yrs ago)</label><input type="range" id="b_lastdd" min="0" max="5" step="0.5" value="0" oninput="sv('b_lastdd','','yr ago')"><span class="val" id="d-b_lastdd">0yr ago</span></div>
+    <div class="row"><label>DD off-hire (days)</label><input type="range" id="b_ddoff" min="0" max="60" step="1" value="25" oninput="sv('b_ddoff','','d')"><span class="val" id="d-b_ddoff">25d</span></div>
+    <div class="row"><label>Intermediate survey ($k)</label><input type="range" id="b_ddis" min="0" max="1500" step="25" value="225" oninput="sv('b_ddis','$','k')"><span class="val" id="d-b_ddis">$225k</span></div>
+    <div class="row"><label>Special survey ($k)</label><input type="range" id="b_ddss" min="0" max="3000" step="50" value="900" oninput="sv('b_ddss','$','k')"><span class="val" id="d-b_ddss">$900k</span></div>
+    <div class="row"><label>Annual maint CAPEX ($k)</label><input type="range" id="b_maint" min="0" max="500" step="10" value="130" oninput="sv('b_maint','$','k')"><span class="val" id="d-b_maint">$130k</span></div>`;
+}
+function confirmBuy(){
+  const name=gs('buy-name').trim();if(!name){alert('Enter name');return;}
+  const all=[...vessels.map(v=>v.name),...purchases.map(p=>p.name)];if(all.includes(name)){alert(`"${name}" exists`);return;}
+  const yr=parseInt(document.getElementById('buy-yr').value);if(!yr||yr<1||yr>20){alert('Valid year 1-20');return;}
+  const newId='buy_'+purchases.length;
+  purchases.push({id:newId,name,year:yr,price:gv('b_price'),age:gv('b_age'),ltv:gv('b_ltv')/100,tenor:gv('b_tenor'),rate:gv('b_rate')/100,spvSetup:gv('b_spvSetup'),spvAnnual:gv('b_spvAnnual'),flagFee:gv('b_flagFee')*1e3,flagAnnual:gv('b_flagAnnual')*1e3,tc:gv('b_tc'),opex:gv('b_opex'),ageprem:gv('b_ageprem')/100,opinfl:gv('b_opinfl')/100,mgmt:gv('b_mgmt'),idle:gv('b_idle'),grt:gv('b_grt')||30000,lastdd:gv('b_lastdd'),ddoff:gv('b_ddoff')||25,ddis:gv('b_ddis'),ddss:gv('b_ddss'),maint:gv('b_maint')*1e3});
+  setVSc(newId,{scenario:'base',cycleOn:true});
+  renderBoughtList();updateSellDrop();renderAll();document.getElementById('buy-name').value='';
+}
+function clearBuy(){document.getElementById('buy-name').value='';document.getElementById('buy-yr').value=6;}
+function removeBuy(i){purchases.splice(i,1);renderBoughtList();updateSellDrop();renderAll();}
+function renderBoughtList(){const el=document.getElementById('bought-list');if(!el)return;el.innerHTML=purchases.length?'<div style="font-size:10px;font-weight:700;color:var(--t2);margin:8px 0 4px">CONFIRMED PURCHASES</div>'+purchases.map((p,i)=>`<div class="tx-item"><div><b>${p.name}</b> — Yr ${p.year}, $${p.price}M</div><span class="ti-del" onclick="removeBuy(${i})">✕</span></div>`).join(''):'';}
+
+// DISTRIBUTION
+function initDist(){for(let y=1;y<=YRS;y++)if(!distSchedule[y])distSchedule[y]={res:25,exp:35,shr:40,saved:false};}
+function applyAll(){const r=parseInt(document.getElementById('def-res').value)||25,e=parseInt(document.getElementById('def-exp').value)||35,s=parseInt(document.getElementById('def-shr').value)||40;if(r+e+s!==100){document.getElementById('dist-warn').innerHTML='<div class="err">Must sum to 100%</div>';return;}document.getElementById('dist-warn').innerHTML='';for(let y=1;y<=YRS;y++)distSchedule[y]={res:r,exp:e,shr:s,saved:true};renderDistTable();renderAll();}
+function saveDist(y){const r=parseInt(document.getElementById(`dr-${y}`).value)||0,e=parseInt(document.getElementById(`de-${y}`).value)||0,s=parseInt(document.getElementById(`ds-${y}`).value)||0;const st=document.getElementById(`dstat-${y}`);if(r+e+s!==100){if(st)st.innerHTML='<span style="color:var(--r);font-size:10px">≠100</span>';return;}distSchedule[y]={res:r,exp:e,shr:s,saved:true};if(st)st.innerHTML='<span class="saved">✓</span>';renderAll();}
+function renderDistTable(){const tb=document.getElementById('dist-body');if(!tb)return;tb.innerHTML=Array.from({length:YRS},(_,i)=>{const y=i+1,d=distSchedule[y]||{res:25,exp:35,shr:40,saved:false},tot=d.res+d.exp+d.shr;return`<tr><td style="font-weight:600">Yr ${y}</td><td><input type="number" id="dr-${y}" value="${d.res}" style="width:45px;border:1px solid var(--bd2);border-radius:3px;padding:3px 4px;font-size:11px;background:var(--bg);color:var(--t)"></td><td><input type="number" id="de-${y}" value="${d.exp}" style="width:45px;border:1px solid var(--bd2);border-radius:3px;padding:3px 4px;font-size:11px;background:var(--bg);color:var(--t)"></td><td><input type="number" id="ds-${y}" value="${d.shr}" style="width:45px;border:1px solid var(--bd2);border-radius:3px;padding:3px 4px;font-size:11px;background:var(--bg);color:var(--t)"></td><td style="font-weight:600;color:${tot===100?'var(--g)':'var(--r)'}">${tot}</td><td id="dstat-${y}">${d.saved?'<span class="saved">✓</span>':''}</td><td><button class="btn btn-p" style="padding:2px 8px;font-size:10px" onclick="saveDist(${y})">Save</button></td></tr>`;}).join('');}
+
+// FINANCE HELPERS
+function annDS(loan,rate,tenor){const mr=rate/12,m=tenor*12;if(mr===0||m===0)return loan/(tenor||1);return loan*mr/(1-Math.pow(1+mr,-m))*12;}
+function tonTax(grt,age){return grt*(age<10?0.53:age<20?0.93:age<30?0.88:0.68);}
+function cycleMult(yr,lo,hi){const clen=gv('cyclen'),coff=gv('cycoff');const phase=((yr-1+coff)%clen)/clen;return lo+(hi-lo)*(Math.sin(phase*2*Math.PI-Math.PI/2)+1)/2;}
+function scParams(sc){if(sc==='bear')return{lo:gv('blo'),hi:gv('bhi')};if(sc==='bull')return{lo:gv('llo'),hi:gv('lhi')};return{lo:gv('mlo'),hi:gv('mhi')};}
+function getMultForVessel(vid,yr){const{scenario,cycleOn}=getVSc(vid);if(!cycleOn)return 1.0;const{lo,hi}=scParams(scenario);return cycleMult(yr,lo,hi);}
+function loanBalance(principal,rate,tenor,yearsPaid){if(yearsPaid>=tenor)return 0;const mr=rate/12,paid=yearsPaid*12;if(mr===0)return Math.max(0,principal*(1-yearsPaid/tenor));const ads12=annDS(principal,rate,tenor)/12;return Math.max(0,principal*Math.pow(1+mr,paid)-ads12*(Math.pow(1+mr,paid)-1)/mr);}
+
+// MAIN MODEL
+function buildModel(){
+  saveVP();
+  const ovhd=gv('ovhd')*1e3*EUR_USD;
+  const allVDefs=[
+    ...vessels.map((v,i)=>({...v,id:'init_'+i,py:1,isInitial:true,ltv:v.ltv/100,rate:v.rate/100,ageprem:v.ageprem/100,opinfl:v.opinfl/100,maint:v.maint*1e3,flagAnnual:v.flagAnnual*1e3,ddis:v.ddis*1e3,ddss:v.ddss*1e3})),
+    ...purchases.map(p=>({...p,isInitial:false,ddis:(p.ddis||225)*1e3,ddss:(p.ddss||900)*1e3}))
+  ];
+  allVDefs.forEach(v=>{v.originalLoan=v.price*1e6*v.ltv;v.ads=annDS(v.originalLoan,v.rate,v.tenor);v.loanEnd=v.py+v.tenor-1;v.active=false;v.soldYr=null;v.salePrice=0;});
+  allVDefs.filter(v=>v.isInitial).forEach(v=>v.active=true);
+  let eqNeeded=0;vessels.forEach(v=>{eqNeeded+=v.price*1e6*(1-v.ltv/100)+v.spvSetup+v.flagFee*1e3;});
+  let resFund=Math.max(0,gv('total-eq')*1e6-eqNeeded/EUR_USD)*EUR_USD;
+  let expFund=0,cumShrNet=0;
+  const vesselRows={};allVDefs.forEach(v=>vesselRows[v.id]=Array(YRS).fill(null));
+  const fundRows=[];
+  const initLoan=allVDefs.filter(v=>v.isInitial).reduce((s,v)=>s+v.originalLoan,0);
+
+  for(let y=1;y<=YRS;y++){
+    allVDefs.filter(v=>!v.isInitial&&v.py===y).forEach(v=>v.active=true);
+    sales.filter(s=>s.year===y).forEach(s=>{const v=allVDefs.find(v=>v.active&&v.name===s.vesselName);if(v){v.active=false;v.soldYr=y;v.salePrice=s.price*1e6;}});
+    let totalNetCF=0;const vesselNetCFs={};
+    let totalLoanBal=0,totalPrinPaid=0,totalIntPaid=0;
+    allVDefs.forEach(v=>{
+      const notYet=!v.isInitial&&v.py>y;const soldBefore=!v.active&&v.soldYr&&v.soldYr<y;
+      if(notYet){vesselRows[v.id][y-1]=null;return;}
+      if(soldBefore){vesselRows[v.id][y-1]={y,sold:true,soldYr:v.soldYr};return;}
+      const yearsPaid=y-v.py;
+      const balOpen=loanBalance(v.originalLoan,v.rate,v.tenor,yearsPaid);
+      const balClose=loanBalance(v.originalLoan,v.rate,v.tenor,yearsPaid+1);
+      const intPaid=balOpen*v.rate;const prinPaid=Math.max(0,balOpen-balClose);
+      const debtSvc=y<=v.loanEnd?v.ads:0;const isLoanFree=debtSvc===0;
+      if(v.active){totalLoanBal+=balClose;if(!isLoanFree){totalPrinPaid+=prinPaid;totalIntPaid+=intPaid;}}
+      const mult=getMultForVessel(v.id,y);
+      const age=v.age+(y-v.py);const agef=age>12?1+v.ageprem*(age-12):1;
+      const opexD=v.opex*Math.pow(1+v.opinfl,y-1)*agef;
+      const tSinceDD=v.lastdd+(y-v.py);
+      const isSS=tSinceDD>0&&Math.round(tSinceDD*10)%50===0;
+      const isIS=!isSS&&tSinceDD>0&&Math.round(tSinceDD*10)%25===0;
+      const dddays=isSS?v.ddoff:isIS?5:0;
+      const opDays=365-v.idle-dddays;const tcD=v.tc*mult;const rev=tcD*opDays;
+      const opexTotal=(opexD+v.mgmt)*365;
+      const surveyCost=isSS?v.ddss:isIS?v.ddis:0;
+      const capex=v.maint+surveyCost;
+      const fees=tonTax(v.grt||30000,age)+v.spvAnnual+(v.flagAnnual||0);
+      const totalCosts=opexTotal+capex+debtSvc+fees;
+      let netCF=rev-totalCosts;if(v.soldYr===y)netCF+=v.salePrice||0;
+      const{scenario,cycleOn}=getVSc(v.id);
+      vesselRows[v.id][y-1]={y,active:true,soldThisYr:v.soldYr===y,salePrice:v.soldYr===y?v.salePrice:0,tcD,tcBase:v.tc,mult,rev,opex:opexTotal,capex,debt:debtSvc,fees,netCF,isBoom:mult>1.2,isTrough:mult<0.65,isSS,isIS,age,isLoanFree,scenario,cycleOn};
+      if(v.active||v.soldYr===y){totalNetCF+=netCF;vesselNetCFs[v.id]=netCF;}
+    });
+    totalNetCF-=ovhd;const allLoanFree=totalLoanBal===0&&y>1;
+    let resDraw=0,netAfterRes=totalNetCF;
+    if(netAfterRes<0){resDraw=Math.min(Math.abs(netAfterRes),resFund);resFund-=resDraw;netAfterRes+=resDraw;}
+    const d=distSchedule[y]||{res:25,exp:35,shr:40};
+    let resAdd=0,expAdd=0,shrG=0,shrN=0;
+    if(netAfterRes>0){resAdd=netAfterRes*(d.res/100);expAdd=netAfterRes*(d.exp/100);shrG=netAfterRes*(d.shr/100);shrN=shrG*(1-DIVTAX);}
+    resFund=Math.max(0,resFund+resAdd);expFund+=Math.max(0,expAdd);cumShrNet+=Math.max(0,shrN);
+    const isBoom=Object.values(vesselRows).some(rows=>rows[y-1]&&rows[y-1].isBoom);
+    const isTrough=Object.values(vesselRows).some(rows=>rows[y-1]&&rows[y-1].isTrough);
+    fundRows.push({y,vesselNetCFs:{...vesselNetCFs},totalNetCF,totalLoanBal:Math.max(0,totalLoanBal),totalPrinPaid,totalIntPaid,allLoanFree,resDraw,netAfterRes,resFund:Math.max(0,resFund),expAdd:Math.max(0,expAdd),expFund,shrN:Math.max(0,shrN),cumShrNet,isBoom,isTrough,initLoan,resAdd,dist:d});
+  }
+  return{allVDefs,vesselRows,fundRows};
+}
+
+function exitScore(r){let s=0;if(r&&r.isBoom)s+=3;if(r&&r.mult>1.4)s+=2;if(r&&!r.isSS&&!r.isIS)s+=1;if(r&&r.netCF>0)s+=1;if(r&&r.isLoanFree)s+=2;return s;}
+function fM(n){return(n<0?'-$':'$')+(Math.abs(n)/1e6).toFixed(2)+'M';}
+function fk(n){return(n<0?'-$':'$')+Math.round(Math.abs(n)/1000)+'k';}
+const scColor={bear:'var(--r)',base:'var(--b)',bull:'var(--g)'};
+const scLabel={bear:'BEAR',base:'BASE',bull:'BULL'};
+
+function renderAll(){
+  ['cyclen','blo','bhi','mlo','mhi','llo','lhi'].forEach(id=>sv(id,'',id==='cyclen'?'yr':'×'));svOff();
+  const{allVDefs,vesselRows,fundRows}=buildModel();
+  const hcoName=gs('hco-name')||'Fleet';
+  document.getElementById('hco-title').textContent=`${hcoName} — 20-Year Tables`;
+  document.getElementById('fund-title').textContent=`${hcoName} — Fleet Fund & Distribution`;
+  document.getElementById('topbar-title').textContent=hcoName;
+
+  // VESSEL TABLES
+  let vtHtml='';
+  allVDefs.forEach(v=>{
+    const saleRec=sales.find(s=>s.vesselName===v.name);const soldYr=saleRec?saleRec.year:null;const isNew=!v.isInitial;
+    const{scenario,cycleOn}=getVSc(v.id);
+    const tag=soldYr?`<span class="vtag vtag-sold">SOLD Yr ${soldYr}</span>`:isNew?`<span class="vtag vtag-new">ACQ Yr ${v.py}</span>`:`<span class="vtag vtag-init">INITIAL</span>`;
+    vtHtml+=`<div class="vessel-section">
+      <div class="vessel-header">
+        <div class="vessel-header-top">
+          <div style="display:flex;align-items:center;gap:8px"><div class="vessel-title">🚢 ${v.name}</div>${tag}</div>
+        </div>
+        <div class="sc-group">
+          <span style="font-size:11px;font-weight:600;color:var(--t2)">Scenario:</span>
+          <button class="sc-btn bear${scenario==='bear'?' active':''}" onclick="setVSc('${v.id}',{scenario:'bear'});renderAll()">Bear</button>
+          <button class="sc-btn base${scenario==='base'?' active':''}" onclick="setVSc('${v.id}',{scenario:'base'});renderAll()">Base</button>
+          <button class="sc-btn bull${scenario==='bull'?' active':''}" onclick="setVSc('${v.id}',{scenario:'bull'});renderAll()">Bull</button>
+          <button class="tog-btn${cycleOn?' on':''}" onclick="setVSc('${v.id}',{cycleOn:${!cycleOn}});renderAll()">${cycleOn?'Cycle ON':'Flat'}</button>
+        </div>
+        <div class="sc-info">${cycleOn?`<b style="color:${scColor[scenario]}">${scLabel[scenario]}</b> · ${(scParams(scenario).lo*100).toFixed(0)}%–${(scParams(scenario).hi*100).toFixed(0)}% of base TC`:`Flat $${v.tc.toLocaleString()}/day`}</div>
+      </div>
+      <div class="tbl-wrap"><table class="v-tbl">
+        <thead>
+          <tr><th style="text-align:left">Year</th><th>TC/day</th><th>Revenue</th><th colspan="4" class="grp">Costs</th><th>Net CF</th></tr>
+          <tr><th></th><th style="font-size:9px;color:${scColor[scenario]}">${cycleOn?scLabel[scenario]:'Flat'}</th><th></th>
+          <th class="gi" style="border-left:2px solid rgba(226,75,74,.2)">OPEX</th><th class="gi">CAPEX</th><th class="gi">Debt</th><th class="gi">Fees</th><th></th></tr>
+        </thead>
+        <tbody id="vtb-${v.id}"></tbody>
+      </table></div>
+    </div>`;
+  });
+  document.getElementById('vessel-tables').innerHTML=vtHtml;
+
+  allVDefs.forEach(v=>{
+    const rows=vesselRows[v.id];const saleRec=sales.find(s=>s.vesselName===v.name);const soldYr=saleRec?saleRec.year:null;
+    const activeRows=rows.filter(r=>r&&r.active&&!r.soldThisYr);const scores=activeRows.map(r=>exitScore(r));const maxSc=scores.length?Math.max(...scores):0;let si=0;
+    const tb=document.getElementById(`vtb-${v.id}`);if(!tb)return;let html='';
+    for(let y=1;y<=YRS;y++){
+      const r=rows[y-1];
+      if(r===null){html+=`<tr><td style="color:var(--t3)">Yr ${y}</td><td colspan="7" style="color:var(--t3);text-align:center">Not yet acquired</td></tr>`;continue;}
+      if(r.sold||(!r.active&&!r.soldThisYr)){html+=`<tr class="sold-yr"><td>Yr ${y}</td><td colspan="7" style="text-align:center;font-style:italic">Sold Yr ${r.soldYr||soldYr}</td></tr>`;continue;}
+      const sc2=r.active&&!r.soldThisYr?scores[si++]:0;
+      const isPrime=sc2>=maxSc-1&&maxSc>0,isGood=sc2>=maxSc-2&&!isPrime&&maxSc>0;
+      const icon=r.isSS?'🔧':r.isIS?'🔍':'';
+      const boom=r.isBoom?`<span style="font-size:9px;color:var(--g);font-weight:700;margin-left:2px">BOOM</span>`:'';
+      const trou=r.isTrough?`<span style="font-size:9px;color:var(--r);font-weight:700;margin-left:2px">TROUGH</span>`:'';
+      const lf=r.isLoanFree?`<span style="font-size:9px;color:var(--g);font-weight:700;margin-left:2px">🟢</span>`:'';
+      const st=r.soldThisYr?`<span style="font-size:9px;color:var(--g);font-weight:700;margin-left:2px">SOLD</span>`:'';
+      const rc=[r.isBoom&&!r.isSS?'boom':'',r.isTrough?'trough':'',r.isSS?'survey':'',r.isLoanFree?'loan-free':'',isPrime?'exit-prime':isGood?'exit-good':''].filter(Boolean).join(' ');
+      html+=`<tr class="${rc}">
+        <td>Yr ${y}${icon}${boom}${trou}${lf}${st}</td>
+        <td style="font-weight:700;color:${r.isBoom?'var(--g)':r.isTrough?'var(--r)':'var(--t)'}">$${Math.round(r.tcD).toLocaleString()}</td>
+        <td>${fM(r.rev)}</td>
+        <td class="am" style="border-left:2px solid rgba(226,75,74,.15)">${fM(r.opex)}</td>
+        <td class="am">${fk(r.capex)}</td>
+        <td class="${r.debt>0?'neg':''}"><span style="color:${r.debt===0?'var(--t3)':''}">${r.debt>0?fM(r.debt):'paid off'}</span></td>
+        <td class="am">${fk(r.fees)}</td>
+        <td class="${r.netCF>=0?'pos':'neg'}">${fM(r.netCF)}</td>
+      </tr>`;
+    }
+    tb.innerHTML=html;
+  });
+
+  // FUND TABLE
+  const initLoanTotal=fundRows[0]?.initLoan||1;
+  document.getElementById('fund-head').innerHTML=`<tr>
+    <th style="text-align:left;min-width:60px">Year</th>
+    ${allVDefs.map(v=>{const{scenario,cycleOn}=getVSc(v.id);return`<th class="vg">${v.name.split(' ').pop()}<br><span style="font-size:9px;color:${scColor[scenario]}">${cycleOn?scLabel[scenario]:'FLAT'}</span></th>`;}).join('')}
+    <th class="vg">Total CF</th>
+    <th class="dg">Loan Bal.</th><th class="dg">Progress</th><th class="dg">Principal</th><th class="dg">Interest</th>
+    <th class="fg">Res.Draw</th><th class="fg">Net+Res</th><th class="fg">→Res</th><th class="fg">→Exp</th><th class="fg">Exp.Bal</th>
+    <th class="fg">Profit Share<br><span style="font-size:9px;font-weight:400">net 5%</span></th><th class="fg">Res.Bal</th>
+  </tr>`;
+
+  let fbody='';let firstLF=null;
+  fundRows.forEach(r=>{
+    if(r.allLoanFree&&!firstLF)firstLF=r.y;
+    const rc=[r.isBoom?'boom':'',r.isTrough?'trough':'',r.resDraw>0?'res-draw':'',r.allLoanFree?'loan-free-yr':''].filter(Boolean).join(' ');
+    const loanPct=initLoanTotal>0?Math.max(0,100-r.totalLoanBal/initLoanTotal*100):100;
+    const barCol=loanPct>80?'var(--g)':loanPct>40?'var(--am)':'var(--r)';
+    const lfTag=r.allLoanFree?` <span style="font-size:9px;color:var(--g);font-weight:700">🟢</span>`:'';
+    fbody+=`<tr class="${rc}">
+      <td>Yr ${r.y}${lfTag}</td>
+      ${allVDefs.map(v=>{const cf=r.vesselNetCFs[v.id];return cf!=null?`<td class="${cf>=0?'pos':'neg'}">${fM(cf)}</td>`:`<td style="color:var(--t3)">—</td>`;}).join('')}
+      <td class="${r.totalNetCF>=0?'pos':'neg'}" style="font-weight:700">${fM(r.totalNetCF)}</td>
+      <td style="color:${r.totalLoanBal>0?'var(--r)':'var(--g)'};font-weight:700">${r.totalLoanBal>0?fM(r.totalLoanBal):'CLEAR'}</td>
+      <td><div class="debt-bar-wrap"><div class="debt-bar-outer"><div class="debt-bar-inner" style="width:${Math.min(100,loanPct).toFixed(0)}%;background:${barCol}"></div></div><span style="font-size:10px;min-width:26px">${loanPct.toFixed(0)}%</span></div></td>
+      <td style="color:var(--am)">${r.totalPrinPaid>0?fM(r.totalPrinPaid):'—'}</td>
+      <td style="color:var(--r)">${r.totalIntPaid>0?fM(r.totalIntPaid):'—'}</td>
+      <td style="color:${r.resDraw>0?'var(--r)':'var(--t3)'};font-weight:${r.resDraw>0?700:400}">${r.resDraw>0?'−'+fM(r.resDraw):'—'}</td>
+      <td class="${r.netAfterRes>=0?'pos':'neg'}" style="font-weight:700">${fM(r.netAfterRes)}</td>
+      <td style="color:var(--b)">${r.resAdd>0?'+'+fM(r.resAdd):'—'}</td>
+      <td style="color:var(--g)">${r.expAdd>0?'+'+fM(r.expAdd):'—'}</td>
+      <td style="color:var(--g);font-weight:600">${fM(r.expFund)}</td>
+      <td style="color:var(--pu);font-weight:700">${fM(r.shrN)}</td>
+      <td style="color:var(--b);font-weight:700">${fM(Math.max(0,r.resFund))}</td>
+    </tr>`;
+  });
+  document.getElementById('fund-body').innerHTML=fbody;
+  let fa='';
+  if(firstLF)fa+=`<div class="suc">🟢 Fleet loan-free from <b>Year ${firstLF}</b></div>`;
+  const drawn=fundRows.filter(r=>r.resDraw>0);
+  if(drawn.length)fa+=`<div class="warn">🔴 Reserve drawn Yrs: <b>${drawn.map(r=>r.y).join(', ')}</b> — total: <b>${fM(drawn.reduce((s,r)=>s+r.resDraw,0))}</b></div>`;
+  const cum20=fundRows[YRS-1]?.cumShrNet||0;
+  if(cum20>0)fa+=`<div class="suc">✓ 20-yr profit share: <b>${fM(cum20)}</b></div>`;
+  document.getElementById('fund-alerts').innerHTML=fa;
+
+  // SHAREHOLDERS
+  const shTitleEl=document.getElementById('sh-section-title');if(shTitleEl)shTitleEl.textContent=`${hcoName} — Shareholder Distribution`;
+  const totalPct=shareholders.reduce((s,sh)=>s+sh.pct,0);
+  const cardsEl=document.getElementById('sh-summary-cards');
+  if(cardsEl)cardsEl.innerHTML=shareholders.map((sh,i)=>`
+    <div class="sh-card">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><div class="sh-dot" style="background:${SH_COLORS[i]}"></div><b style="font-size:12px">${sh.name}</b></div>
+      <div style="font-size:20px;font-weight:700;color:${SH_COLORS[i]}">${sh.pct.toFixed(1)}%</div>
+      <div style="font-size:10px;color:var(--t2);margin-top:6px">20yr profit: <b>${fM(cum20*(sh.pct/100))}</b></div>
+    </div>`).join('');
+
+  const shTablesEl=document.getElementById('sh-tables');
+  if(!shTablesEl)return;
+  if(Math.abs(totalPct-100)>0.5){shTablesEl.innerHTML=`<div class="warn">⚠ Shareholder percentages must sum to 100%. Current: ${totalPct.toFixed(1)}%</div>`;return;}
+  let shHtml='';
+  shareholders.forEach((sh,i)=>{
+    const pct=sh.pct/100;let cumPs=0;let rows='';
+    fundRows.forEach(r=>{
+      const ps=r.shrN*pct;cumPs+=ps;
+      rows+=`<tr>
+        <td>Yr ${r.y}${r.allLoanFree?' 🟢':''}${r.isBoom?' <span style="font-size:9px;color:var(--g)">BOOM</span>':''}${r.isTrough?' <span style="font-size:9px;color:var(--r)">TROUGH</span>':''}</td>
+        <td style="color:${ps>0?'var(--pu)':'var(--t3)'};font-weight:600">${ps>0?fM(ps):'—'}</td>
+        <td style="color:var(--b)">${fM(r.resFund*pct)}</td>
+        <td style="color:var(--g)">${fM(r.expFund*pct)}</td>
+      </tr>`;
+    });
+    rows+=`<tr class="total-row"><td><b>20-Year Total</b></td><td style="color:var(--pu);font-weight:700">${fM(cumPs)}</td><td style="color:var(--b);font-weight:700">${fM((fundRows[YRS-1]?.resFund||0)*pct)}</td><td style="color:var(--g);font-weight:700">${fM((fundRows[YRS-1]?.expFund||0)*pct)}</td></tr>`;
+    shHtml+=`<div class="sh-tbl-section">
+      <div class="sh-tbl-header" style="background:${SH_COLORS[i]}18;border:1px solid ${SH_COLORS[i]}40;color:${SH_COLORS[i]}">
+        <div class="sh-dot" style="background:${SH_COLORS[i]}"></div>${sh.name} · ${sh.pct.toFixed(1)}% ownership
+      </div>
+      <div class="tbl-wrap"><table class="sh-tbl">
+        <thead><tr><th style="text-align:left">Year</th><th>Profit Share<br><span style="font-size:9px;font-weight:400">net 5% GR tax</span></th><th>Reserve Access</th><th>Expansion Access</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+    </div>`;
+  });
+  shTablesEl.innerHTML=shHtml;
+}
+
+function go(id){
+  saveVP();
+  if(id==='renew'){updateSellDrop();renderSoldList();renderBoughtList();renderBuyInputs();}
+  if(id==='dist')renderDistTable();
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  const map={setup:0,renew:1,dist:2,cycle:3,tbl:4,shareholders:5};
+  document.querySelectorAll('.tab')[map[id]].classList.add('active');
+  setTimeout(renderAll,40);
+}
+
+// BOOT
+vessels=[defV(0),defV(1)];
+vessels.forEach((v,i)=>{setVSc('init_'+i,{scenario:'base',cycleOn:true});});
+initDist();renderVTabs();renderVPanel(0);renderShInputs();validateShPct();updateEqBar();updateSellDrop();renderAll();
+
+// Register service worker
+if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').then(r=>console.log('SW registered')).catch(e=>console.log('SW failed',e));});}
+</script>
+</body>
+</html>
